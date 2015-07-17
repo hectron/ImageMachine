@@ -1,6 +1,7 @@
 from ConfigParser import RawConfigParser
 from io import BytesIO
 from os import environ, path
+import util
 
 class Settings(object):
     def __init__(self):
@@ -16,7 +17,7 @@ class Settings(object):
         self.config_name = filename
 
     def set_config(self):
-        config_file = path.join(path.abspath(path.dirname(__file__)), self.config_name)
+        config_file = util.build_relative_path(self.config_name)
 
         with open(config_file) as f:
             config_data = f.read()
@@ -33,3 +34,4 @@ class Settings(object):
             pass
 
         return value
+
