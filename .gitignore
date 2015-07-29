@@ -60,7 +60,7 @@ target/
 .DS_Store
 
 # Ignore the config file
-image_machine/config.ini
+image_machine/config.json
 
 # Do not include the cached images
 image_cache/
