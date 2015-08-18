@@ -1,0 +1,8 @@
+{
+  "ftp": {
+    "username": "",
+    "password": "",
+    "host": "ftp.domain.com",
+    "port": 21
+  }
+}

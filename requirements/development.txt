@@ -1,0 +1,7 @@
+# See more documentation in /docs/libraries.md
+
+# Importing from `base.txt`
+-r base.txt
+
+nose==1.3.7
+

@@ -1,0 +1,4 @@
+# This inherits `requirements/base.txt`. If you would like to use a
+# different version, choose a different file from the `requirements` folder.
+
+-r requiremnts/base.txt

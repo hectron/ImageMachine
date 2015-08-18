@@ -1,4 +1,6 @@
+import pdb
 import settings
+import sys
 import util
 from ftplib import FTP
 from os import path
@@ -84,14 +86,14 @@ class FtpClient(object):
         whitespace_re = re.compile(r'\s+')
         files = self.get_directory_contents(directory_path)
 
-        formatted_files = []
+        formatted_results = []
 
         for f in files:
             result = whitespace_re.sub(' ', f).split(' ')
             if result[-2] == '<DIR>':
-                formatted_files.append(result[-1])
+                formatted_results.append(result[-1])
 
-        return formatted_files
+        return formatted_results
 
     def get_file(self, filename, destination):
         """
@@ -118,7 +120,8 @@ class FtpClient(object):
             util.conditional_print("About to delete file: {0}".format(f))
             try:
                 self.connection.delete(f)
-            except e:
+            except:
+                e = sys.exc_info()[0]
                 print("Unable to delete file: {0}\nError: {1}".format(f, e))
 
     def get_all_files(self):
@@ -147,17 +150,17 @@ class FtpClient(object):
         Checks whether or not the given `dir_name` is a directory within the
         `base_directory_path` location.
         """
-        directories = list_ftp_directories(base_directory_path)
+        directories = self.list_ftp_directories(base_directory_path)
         return directories.count(dir_name) > 0
 
     def make_ftp_directory(self, dir_name, base_directory_path=''):
         """
         Safely creates an FTP directory if one does not exist.
         """
-        if not is_ftp_directory(dir_name, base_directory_path):
+        if not self.is_ftp_directory(dir_name, base_directory_path):
             self.connection.mkd(dir_name)
 
-    def upload_files(self, files, destination='done'):
+    def upload_files(self, files, destination='NotSoDone'):
         """
         Uploads a list of files to the given destination.
         """

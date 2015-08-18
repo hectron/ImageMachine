@@ -1,0 +1,6 @@
+# This file has the base requirements needed to run the application. Any
+# specific python requirements for developing, testing, releasing are in their
+# appropriate *.txt file. Please be mindful of where any requirement is
+# necessary.
+
+openpyxl==2.2.5

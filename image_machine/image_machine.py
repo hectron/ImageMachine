@@ -2,6 +2,8 @@
 from argparse import ArgumentParser
 from ftp_client import FtpClient
 from image_csv import ImageCsv
+import pdb
+import sys
 import util
 
 def main():
@@ -16,10 +18,12 @@ def main():
         print("No configuration file used. Defaulting to config.json")
         options.config_file = 'image_machine/config.json'
 
-    files = download_files_from_ftp(options.config_file, options.debug)
-    process_files(files, options.config_file, options.debug)
+    files = download_files_from_ftp(options.config_file)
+    process_files(files, options.config_file)
+    upload_files(files, options.config_file)
+    delete_old_files(files, options.config_file)
 
-def download_files_from_ftp(configuration, use_debug):
+def download_files_from_ftp(configuration):
     """
     The main worker for downloading the files from the FTP. It attempts to
     safely download files from the FTP server.
@@ -28,7 +32,8 @@ def download_files_from_ftp(configuration, use_debug):
     try:
         with FtpClient(configuration) as ftp_client:
             files = ftp_client.get_all_files()
-    except e:
+    except:
+        e = sys.exc_info()[0]
         util.conditional_print(
                 'An error occured while trying to retrieve files via FTP.',
                 'ERROR')
@@ -36,13 +41,28 @@ def download_files_from_ftp(configuration, use_debug):
     finally:
         return files
 
-def process_files(files, configuration, use_debug):
+def process_files(files, configuration):
     """
     The main worker for processing each file that was downloaded.
     """
     for f in files:
         importer = ImageCsv(f)
         importer.perform_magic()
+
+def upload_files(files, configuration):
+    try:
+        with FtpClient(configuration) as ftp_client:
+            ftp_client.upload_files(files)
+    except:
+        e = sys.exc_info()[0]
+        util.conditional_print(
+                'An error occured while trying to UPLOAD files to the FTP server.',
+                'ERROR')
+        util.conditional_print(e, 'ERROR')
+
+def delete_old_files(files, configuration):
+    with FtpClient(configuration) as ftp_client:
+        ftp_client.delete_files(files)
 
 def command_line_parser():
     """

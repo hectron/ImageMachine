@@ -1,5 +1,6 @@
 import csv
 import os
+import pdb
 import util
 import zipfile
 from urllib import urlretrieve
@@ -15,7 +16,8 @@ class ImageCsv(object):
         self.can_download = False
         self.allowed_image_types = ['jpg', 'png', 'jpeg', 'gif']
         self.csv_file_path = util.build_path(relative_csv_path)
-        self.temp_dir_name = self.csv_file_path.split('.')[0]
+        self.file_name = self.csv_file_path.split('.')[0]
+        self.new_file_name = "{0}_done".format(self.file_name)
         self.completed = False
 
     def __del__(self):
@@ -59,7 +61,7 @@ class ImageCsv(object):
         """
         Sets the instance to work in the temporary directory.
         """
-        util.work_in_tmp_directory(self.temp_dir_name)
+        util.work_in_tmp_directory(self.file_name)
 
     def download_all_images(self):
         """
@@ -81,6 +83,7 @@ class ImageCsv(object):
         Downloads the image and saves it locally.
         """
         name = self.get_image_name(image_url)
+        pdb.set_trace()
         urlretrieve(image_url, name)
 
     def compress_images(self):
@@ -89,7 +92,9 @@ class ImageCsv(object):
         `allowed_image_types`, and compresses them.
         """
         util.conditional_print("Zipping images.")
-        with zipfile.ZipFile('images.zip', 'w') as zipper:
+        zip_name = '{0}_images.zip'.format(self.file_name)
+
+        with zipfile.ZipFile(zip_name, 'w') as zipper:
             for img in os.listdir('.'):
                 for extension in self.allowed_image_types:
                     if img.endswith(extension):
@@ -114,7 +119,7 @@ class ImageCsv(object):
                     row['Image'] = new_path
                 updated_rows.append(row)
 
-        with open(self.csv_file_path, 'wb') as f:
+        with open(self.new_file_name, 'wb') as f:
             csv_writer = csv.DictWriter(f, fieldnames=headers)
 
             csv_writer.writeheader()
