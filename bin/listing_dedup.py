@@ -21,56 +21,56 @@ def extract_listings(file_path):
 def extract_csv_listings(file_path):
     """
     Extracts the listings as a dictionary from a tab-delimited file (.csv,
-    .txt) file. It returns an array of dictionaries.
+    .txt) file. It returns an array of ordered dictionaries.
     """
     listings = []
 
     with open(file_path, 'r') as f:
         csv_reader = csv.DictReader(f)
-
-        for row in csv_reader:
-            listings.append(row)
+        listings = [row for row in csv_reader]
 
     return listings
 
 def extract_xlsx_listings(file_path):
     """
     Extracts the listings as a dictionary from a .xslx file. It returns an
-    array of dictionaries.
+    array of ordered dictionaries.
     """
     listings = []
 
     # Do not include formulas, get the calculated data
     workbook = openpyxl.load_workbook(filename = file_path, read_only=True, data_only=True)
-
     sheet_names = workbook.get_sheet_names()
 
+    # In case there are multiple sheets in an xlsx file
     for sheet in sheet_names:
         s = workbook[sheet]
-        i = 0
+        is_header = True
         headers = []
         listings = []
 
         for row in s.rows:
             real_row = OrderedDict()
 
-            if i == 0:
-                for cell in row:
-                    headers.append(cell.value)
+            if is_header:
+                headers = [cell.value for cell in row]
+                is_header = False
             else:
-                cell_index = 0
+                cell_index = 1
 
                 for cell in row:
                     real_row[headers[cell_index]] = cell.value
                     cell_index += 1
-
-            i += 1
 
             listings.append(real_row)
 
     return listings
 
 def unique_listings(*list_of_listings):
+    """
+    Receives any number of arguments, which should be a list, and makes a new
+    list with the unique listings.
+    """
     unique_listings = []
 
     for listings in list_of_listings:
@@ -82,8 +82,11 @@ def unique_listings(*list_of_listings):
 
 
 def write_listings(new_file_path, listings):
+    """
+    Writes the given array of dictionaries into an .xlsx file. Note that the
+    listings are expected to have the same keys, in the same order.
+    """
     workbook = openpyxl.Workbook()
-
     sheet = workbook.active
     sheet.title = 'cleaned listings'
 
@@ -104,3 +107,4 @@ def write_listings(new_file_path, listings):
         row_index += 1
 
     workbook.save(filename = new_file_path)
+
