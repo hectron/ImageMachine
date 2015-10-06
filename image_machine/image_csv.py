@@ -1,5 +1,6 @@
 import csv
 import os
+import sys
 import util
 import zipfile
 from urllib import urlretrieve
@@ -10,6 +11,7 @@ class ImageCsv(object):
     also updates the original CSV file to have the relative path.
     """
     def __init__(self, relative_csv_path=''):
+        csv.field_size_limit(sys.maxsize)
         self.image_paths = []
         self.saved_path = os.getcwd()
         self.can_download = False
@@ -67,6 +69,7 @@ class ImageCsv(object):
         should be called after `can_download` is True.
         """
         util.conditional_print("Downloading images.")
+        self.image_paths = list(set(self.image_paths))
         for image_url in self.image_paths:
             self.download_image(image_url)
 
@@ -80,8 +83,9 @@ class ImageCsv(object):
         """
         Downloads the image and saves it locally.
         """
-        name = self.get_image_name(image_url)
-        urlretrieve(image_url, name)
+        if image_url.startswith('http'):
+            name = self.get_image_name(image_url)
+            urlretrieve(image_url, name)
 
     def compress_images(self):
         """
@@ -103,6 +107,8 @@ class ImageCsv(object):
         util.conditional_print("Updating image paths.")
         updated_rows = []
         headers = []
+        new_file_path = self.csv_file_path.split('.csv')
+        new_file_path = "{0}_new.csv".format(new_file_path[0])
 
         with open(self.csv_file_path, 'rU') as f:
             csv_reader = csv.DictReader(f)
@@ -114,7 +120,7 @@ class ImageCsv(object):
                     row['Image'] = new_path
                 updated_rows.append(row)
 
-        with open(self.csv_file_path, 'wb') as f:
+        with open(new_file_path, 'wb') as f:
             csv_writer = csv.DictWriter(f, fieldnames=headers)
 
             csv_writer.writeheader()
