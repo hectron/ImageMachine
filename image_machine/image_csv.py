@@ -4,6 +4,7 @@ import sys
 import util
 import zipfile
 from urllib import urlretrieve
+from time import time
 
 class ImageCsv(object):
     """
@@ -107,8 +108,7 @@ class ImageCsv(object):
         util.conditional_print("Updating image paths.")
         updated_rows = []
         headers = []
-        new_file_path = self.csv_file_path.split('.csv')
-        new_file_path = "{0}_new.csv".format(new_file_path[0])
+        new_file_path = None
 
         with open(self.csv_file_path, 'rU') as f:
             csv_reader = csv.DictReader(f)
@@ -119,6 +119,8 @@ class ImageCsv(object):
                     new_path = self.get_image_name(row['Image'])
                     row['Image'] = new_path
                 updated_rows.append(row)
+                if not new_file_path:
+                    new_file_path = self.build_new_file_path(row)
 
         with open(new_file_path, 'wb') as f:
             csv_writer = csv.DictWriter(f, fieldnames=headers)
@@ -127,3 +129,8 @@ class ImageCsv(object):
             for row in updated_rows:
                 csv_writer.writerow(row)
 
+    def build_new_file_path(self, column):
+        name = column['Campaign Name']
+        timestamp = str(time())
+        timestamp = ''.join(timestamp.split('.'))
+        return "{0}{1}.csv".format(name, str(timestamp))
