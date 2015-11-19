@@ -1,13 +1,15 @@
 import os
 import glob
 import csv
+import shutil
 import sys
 from xlsxwriter.workbook import Workbook
 
 reload(sys)
 sys.setdefaultencoding("ISO-8859-1")
+csv_files = glob.glob(os.path.join('.', 'tmp', '*.csv'))
 
-for csv_file in glob.glob(os.path.join('.', 'tmp', '*.csv')):
+for csv_file in csv_files:
     print('Found file:\t\t{0}'.format(csv_file))
     new_file_name = '{0}.xlsx'.format(csv_file.split('.csv')[0])
 
@@ -23,3 +25,4 @@ for csv_file in glob.glob(os.path.join('.', 'tmp', '*.csv')):
         print('*' * 80)
 
     workbook.close()
+    shutil.move(csv_file, 'archived')
