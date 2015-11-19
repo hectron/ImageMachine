@@ -65,3 +65,4 @@ image_machine/config.json
 # Do not include the cached images
 image_cache/
 tmp/
+archived/

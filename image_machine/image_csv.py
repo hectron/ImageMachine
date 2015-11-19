@@ -1,5 +1,6 @@
 import csv
 import os
+import shutil
 import sys
 import util
 import zipfile
@@ -129,8 +130,24 @@ class ImageCsv(object):
             for row in updated_rows:
                 csv_writer.writerow(row)
 
+        if new_file_path:
+            self.rename_image_folder(new_file_path)
+            self.archive_old_file()
+
+
     def build_new_file_path(self, column):
         name = column['Campaign Name']
         timestamp = str(time())
         timestamp = ''.join(timestamp.split('.'))
         return "{0}{1}.csv".format(name, str(timestamp))
+
+
+    def archive_old_file(self):
+        csv_file_dir = os.path.dirname(self.csv_file_path)
+        archive_path = os.path.join(csv_file_dir, 'archived')
+        if not os.path.isdir(archive_path):
+            os.mkdir(archive_path)
+        shutil.move(self.csv_file_path, archive_path)
+
+    def rename_image_folder(self, new_name):
+        os.rename(self.temp_dir_name, new_name.split('.')[0])
