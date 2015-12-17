@@ -7,6 +7,7 @@ import zipfile
 from urllib import urlretrieve
 from time import time
 
+
 class ImageCsv(object):
     """
     This interfaces with a CSV file to download images and zip those images. It
@@ -22,9 +23,11 @@ class ImageCsv(object):
         self.temp_dir_name = self.csv_file_path.split('.')[0]
         self.completed = False
 
+
     def __del__(self):
         if self.completed:
             self.update_image_paths()
+
 
     def perform_magic(self):
         """
@@ -42,11 +45,13 @@ class ImageCsv(object):
         else:
             print("No magic can be done. Was this class initialized with a file path?")
 
+
     def wrap_it_up_kid(self):
         """
         When called, it changes to the path it was initialized with.
         """
         os.chdir(self.saved_path)
+
 
     def read_csv_image_path(self):
         """
@@ -59,11 +64,13 @@ class ImageCsv(object):
             self.image_paths = [row['Image'] for row in csv_reader if row['Image'] not in self.image_paths]
             self.can_download = True
 
+
     def work_in_tmp_dir(self):
         """
         Sets the instance to work in the temporary directory.
         """
         util.work_in_tmp_directory(self.temp_dir_name)
+
 
     def download_all_images(self):
         """
@@ -75,11 +82,13 @@ class ImageCsv(object):
         for image_url in self.image_paths:
             self.download_image(image_url)
 
+
     def get_image_name(self, image_url):
         """
         Extracts the file name and extension from a URL.
         """
         return image_url.split('/')[-1]
+
 
     def download_image(self, image_url):
         """
@@ -88,6 +97,7 @@ class ImageCsv(object):
         if image_url.startswith('http'):
             name = self.get_image_name(image_url)
             urlretrieve(image_url, name)
+
 
     def compress_images(self):
         """
@@ -100,6 +110,7 @@ class ImageCsv(object):
                 for extension in self.allowed_image_types:
                     if img.endswith(extension):
                         zipper.write(os.path.join('.', img))
+
 
     def update_image_paths(self):
         """
@@ -148,6 +159,7 @@ class ImageCsv(object):
         if not os.path.isdir(archive_path):
             os.mkdir(archive_path)
         shutil.move(self.csv_file_path, archive_path)
+
 
     def rename_image_folder(self, new_name):
         os.rename(self.temp_dir_name, new_name.split('.')[0])

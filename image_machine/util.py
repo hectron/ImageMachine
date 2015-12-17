@@ -1,4 +1,6 @@
 import os
+from colorama import init, Fore, Back, Style
+
 
 def build_relative_path(filename, temp_folder=''):
     """
@@ -8,12 +10,14 @@ def build_relative_path(filename, temp_folder=''):
             os.path.abspath(os.path.dirname(__file__)),
             build_temp_path(filename, temp_folder))
 
+
 def build_path(filename, temp_folder=''):
     """
     Returns the full path of the file.
     """
     return os.path.join('',
             build_temp_path(filename, temp_folder))
+
 
 def build_temp_path(filename, temp_folder=''):
     """
@@ -26,6 +30,7 @@ def build_temp_path(filename, temp_folder=''):
 
     return filename
 
+
 def work_in_tmp_directory(temp_dir_name='tmp'):
     """
     Creates a temporary directory if one does not exist. It then changes into
@@ -37,10 +42,14 @@ def work_in_tmp_directory(temp_dir_name='tmp'):
 
     os.chdir(temp_dir_name)
 
+
 def conditional_print(thing_to_print, log_level='DEBUG'):
     """
     Uses the setting's key 'verbosity' to determine the log level. Prints out
     `thing_to_print` prepended by [<LOG LEVEL>].
     """
-    print("[{0}] {1}".format(log_level, thing_to_print))
+    _print("[{0}] {1}".format(log_level, thing_to_print))
 
+
+def _print(stuff, style='DIM', foreground_color='BLUE'):
+    print(Style.__getattribute__(style) + Fore.__getattribute__(foreground_color) + str(stuff))

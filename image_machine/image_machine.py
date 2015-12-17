@@ -13,8 +13,8 @@ def main():
     options = command_line_parser()
 
     if not options.config_file:
-        print("No configuration file used. Defaulting to config.json")
-        options.config_file = 'image_machine/config.json'
+        print("No configuration file used. Defaulting to settings.json")
+        options.config_file = 'image_machine/settings.json'
 
     files = download_files_from_ftp(options.config_file, options.debug)
     process_files(files, options.config_file, options.debug)

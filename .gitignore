@@ -63,6 +63,7 @@ target/
 image_machine/config.json
 
 # Do not include the cached images
-image_cache/
 tmp/
 archived/
+archived
+image_machine/settings.json

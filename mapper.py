@@ -2,6 +2,8 @@ import csv
 import os
 import shutil
 from collections import OrderedDict
+from image_machine.util import _print
+
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 TMP_DIR = os.path.join(BASE_DIR, 'tmp')
@@ -210,8 +212,10 @@ def get_new_columns():
 
     return columns
 
+
 def map_file(filepath):
-    print('Mapping file found here: %s' % filepath)
+    _print(('Mapping file found here: %s' % filepath),
+            style='BRIGHT', foreground_color='GREEN')
     new_columns = get_new_columns()
     new_data = []
     with open(filepath, 'rU') as f:
@@ -229,8 +233,10 @@ def map_file(filepath):
             new_data.append(result)
     return new_data
 
+
 def create_mapped_file(filepath, data):
-    print('Writing new file: %s' % filepath)
+    _print(('Writing new file: %s' % filepath),
+            style='BRIGHT', foreground_color='GREEN')
     headers = get_new_columns().keys()
 
     with open(filepath, 'wb') as f:
@@ -252,9 +258,11 @@ def build_new_filename(original_filepath, extension):
     filename = fileinfo[0]
     return '%s_new%s' % (filename, extension)
 
+
 def move_files(file_paths):
     for path in file_paths:
         shutil.move(path, NEW_DIR)
+
 
 def gogogo():
     desired_extension = '.csv'
